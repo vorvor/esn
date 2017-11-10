@@ -1,0 +1,8 @@
+name = News aggregator
+description = News aggregator
+package = ESN
+core = 7.x
+version = 7.x-1.x
+
+;files[] =
+;dependencies[] =

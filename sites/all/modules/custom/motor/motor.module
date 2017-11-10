@@ -1,0 +1,639 @@
+<?php
+/**
+ * @file
+ * 
+ */
+
+
+/**
+ * User track
+ */
+function motor_page_alter() {
+  drupal_add_js(drupal_get_path('module', 'motor') . '/js/motor.js');
+
+  drupal_add_js(drupal_get_path('module', 'motor') . '/modal/js/modalEffects.js');
+  drupal_add_js(drupal_get_path('module', 'motor') . '/modal/js/classie.js');
+  drupal_add_js(drupal_get_path('module', 'motor') . '/modal/js/cssParser.js');
+  drupal_add_js(drupal_get_path('module', 'motor') . '/modal/js/modernizr.custom.js');
+
+  drupal_add_css(drupal_get_path('module', 'motor') . '/modal/css/component.css');
+  drupal_add_css(drupal_get_path('module', 'motor') . '/modal/css/default.css');
+
+
+
+  global $user;
+  if ($user->uid ==0 || $user->uid == 1) {
+    return;
+  }
+    if ($user->uid !==0 && $user->uid !== 1) {
+    $prevtime = variable_get($user->name . '_time', 0);
+    $diff = 0;
+    if ($prevtime != 0) {
+      $diff = $prevtime - time();
+      variable_set($user->name . '_time', time());
+    }
+    $data = array(
+      'user-name' => $user->name,
+      'time' => date('Y-m-d H:i:s'),
+      'diff-min' => $diff / 60,
+      'path' => current_path(),
+    );
+    watchdog('user-track', print_r($data, 1));
+  }
+}
+
+/**
+ * Implements hook_ctools_plugin_directory().
+ */
+function motor_ctools_plugin_directory($module, $plugin) {
+  if ($module == 'ctools' && !empty($plugin)) {
+    return "plugins/$plugin";
+  }
+  if ($module == 'panels' && !empty($plugin)) {
+    return "plugins/$plugin";
+  }
+}
+
+/**
+ * Implements hook_views_api().
+ */
+function motor_views_api($module = NULL, $api = NULL) {
+  return array(
+    'api' => '3.0',
+  );
+}
+
+function motor_menu() {
+  $items['decide/ajax/%/%'] = array(
+    'title' => 'Flag confirm',
+    'page callback' => 'motor_decide_save',
+    'page arguments' => array(2, 3),
+    'access arguments' => array('access content'),
+    'type' => MENU_NORMAL_ITEM,
+  );
+
+  $items['add_test_event'] = array(
+    'title' => 'Test event',
+    'page callback' => '_motor_add_test_event',
+    'access arguments' => array('access content'),
+    'type' => MENU_NORMAL_ITEM,
+  );
+
+  $items['post'] = array(
+    'title' => 'Flag confirm',
+    'page callback' => 'motor_external_content_frame',
+    'access arguments' => array('access content'),
+    'type' => MENU_NORMAL_ITEM,
+  );
+
+  $items['fb-import-posts'] = array(
+    'title' => 'Flag confirm',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('motor_fbimport_form'),
+    'access arguments' => array('access content'),
+    'type' => MENU_NORMAL_ITEM,
+  );
+
+  return $items;
+}
+
+/**
+ * Saves decide. Always nid1 is the winner, that's how argument arrive, the order you know.
+ */
+function motor_decide_save($nid1, $nid2) {
+  global $user;
+  $query = db_insert('decide')
+    ->fields(array(
+      'uid' => $user->uid,
+      'nid1' => $nid1,
+      'nid2' => $nid2,
+      ))
+    ->execute();
+
+/*  $images = motor_throw_decide_item($nid1);
+  if (!$images) {*/
+    $images = motor_throw_decide_item();
+  /*}*/
+  if (empty($images)) {
+    $images = NULL;
+  }
+  drupal_json_output($images);
+}
+
+/*
+ *
+ */
+
+function motor_throw_decide_item($nid = NULL) {
+  global $user;
+  $time_start = microtime(true);
+
+  $tid = arg(1);
+
+  $query = db_select('field_data_field_image', 'i');
+  $query->join('field_data_field_type', 't', 't.entity_id = i.entity_id');
+  $query
+    ->fields('i', array('entity_id', 'field_image_fid'))
+    ->condition('i.bundle', 'decide')
+    ->condition('t.field_type_tid', $tid)
+    ->orderRandom();
+  $results = $query
+    ->execute()
+    ->fetchAll();
+
+  if ($nid) {
+    $results_[] = (object)array('entity_id' => $nid);
+  }
+  else {
+    $results_ = $results;
+  }
+
+  $found = [];
+  foreach ($results as $result1) {
+    foreach ($results_ as $result2) {
+      if ($result2->entity_id != $result1->entity_id) {
+        $db_and1 = db_and();
+        $db_and1->condition('d.nid1', $result1->entity_id);
+        $db_and1->condition('d.nid2', $result2->entity_id);
+        $db_and2 = db_and();
+        $db_and2->condition('d.nid1', $result2->entity_id);
+        $db_and2->condition('d.nid2', $result1->entity_id);
+        $db_or = db_or();
+        $db_or->condition($db_and1);
+        $db_or->condition($db_and2);
+        $query = db_select('decide', 'd');
+        $query
+          ->fields('d', array('nid1', 'nid2'))
+          ->condition('d.uid', $user->uid)
+          ->condition($db_or);
+        $results_2 = $query
+          ->execute()
+          ->fetchAll();
+        if (count($results_2) == 0 && empty($found)) {
+          $found[] = $result1;
+          $found[] = $result2;
+        }
+      }
+    }
+  }
+  $images = [];
+  foreach ($found as $result) {
+    $file = file_load($result->field_image_fid);
+    $image = array(
+      'style_name' => 'big_box',
+      'path' => $file->uri,
+    );
+    $images[]= array(
+      'img' => theme('image_style', $image, array(
+        '#attributes' => array('data-nid' => $result->entity_id),
+      )),
+      'nid' => $result->entity_id,
+    );
+  }
+  $time_end = microtime(true);
+  $execution_time = ($time_end - $time_start)/60;
+  return $images;
+}
+
+function motor_decide_order($uid = NULL, $tid = NULL, $nidflag = FALSE) {
+  global $user;
+  if (!$uid) {
+    $uid = $user->uid;
+  }
+  $query = db_select('decide', 'd');
+  $query->join('field_data_field_image', 'i1', 'i1.entity_id = d.nid1');
+  $query->join('field_data_field_image', 'i2', 'i2.entity_id = d.nid2');
+  if ($tid) {
+    $query->join('field_data_field_type', 't1', 't1.entity_id = d.nid1');
+    $query->join('field_data_field_type', 't2', 't2.entity_id = d.nid2');
+    $query->condition('t1.field_type_tid', $tid);
+    $query->condition('t2.field_type_tid', $tid);
+  }
+  $query->condition('d.uid', $uid);
+
+  $query
+    ->fields('d', array('nid1', 'nid2'))
+    ->fields('i1', array('field_image_fid'))
+    ->fields('i2', array('field_image_fid'));
+  $results = $query
+    ->execute()
+    ->fetchAll();
+  $order = [];
+  $once = [];
+  foreach ($results as $result) {
+    $nids = [];
+    $file = [];
+    if (!in_array($result->nid1, $once)) {
+      $nids[] = $result->nid1;
+      $file[] = file_load($result->field_image_fid);
+    }
+    if (!in_array($result->nid2, $once)) {
+      $nids[] = $result->nid2;
+      $file[] = file_load($result->i2_field_image_fid);
+    }
+    if (!empty($nids)) {
+      $once = array_merge($nids, $once);
+      foreach ($nids as $key => $nid) {
+        $image = array(
+          'style_name' => 'mini-box',
+          'path' => $file[$key]->uri,
+        );
+        $order[] = array(
+          'nid' => $nid,
+          'img' => theme('image_style', $image, array(
+            '#attributes' => array(
+              'data-nid' => $nid,
+            ),
+          )),
+        );
+      }
+
+    }
+  }
+  $change = TRUE;
+  while ($change) {
+    $change = FALSE;
+    for ($c = 0; $c < count($order) - 1; $c++) {
+      if (!motor_check_order($order[$c]['nid'], $order[$c + 1]['nid'])) {
+        $a = $order[$c];
+        $order[$c] = $order[$c + 1];
+        $order[$c + 1] = $a;
+        $change = TRUE;
+      }
+    }
+  }
+
+  if ($nidflag) {
+    return $order;
+  }
+
+  foreach ($order as $item) {
+    $images[] = $item['img'] . '(' . $item['nid'] .')';
+  }
+  $images = implode(',', $images);
+
+  return $images;
+}
+
+function motor_check_order($nid1, $nid2) {
+  $query = db_select('decide', 'd');
+  $query
+    ->fields('d', array('nid1', 'nid2'))
+    ->condition('nid1', $nid1)
+    ->condition('nid2', $nid2);
+  $results = $query
+    ->execute()
+    ->fetchAll();
+  if (count($results) == 0) {
+    $query = db_select('decide', 'd');
+    $query
+      ->fields('d', array('nid1', 'nid2'))
+      ->condition('nid2', $nid1)
+      ->condition('nid1', $nid2);
+    $results = $query
+      ->execute()
+      ->fetchAll();
+    if (count($results) == 0) {
+      return TRUE;
+    }
+    else {
+      return FALSE;
+    }
+  }
+  else {
+    return TRUE;
+  }
+}
+
+function motor_compare_decides($uid1, $uid2, $tid) {
+  $images[] = motor_decide_order($uid1, $tid, TRUE);
+  $images[] = motor_decide_order($uid2, $tid, TRUE);
+  if (count($images[0]) == 0 || count($images[1]) == 0) {
+    return NULL;
+  }
+  $diff = [];
+  $s1 = [];
+  $s2 = [];
+  $sum = 0;
+  foreach ($images as $image) {
+    for ($c = 0; $c < count($image); $c++) {
+      if (isset($diff[$image[$c]['nid']])) {
+        $diff[$image[$c]['nid']] -= $c;
+        $sum += abs($diff[$image[$c]['nid']]);
+        $s2[] = $image[$c]['nid'];
+      }
+      else {
+        $diff[$image[$c]['nid']] = $c;
+        $s1[] = $image[$c]['nid'];
+      }
+    }
+  }
+  $max = count($images[0]) * count($images[0]);
+  $percent = 100 - ($sum / $max) * 100;
+
+  $s1 = implode('', $s1);
+  $s2 = implode('', $s2);
+  $p = 0;
+  similar_text($s1, $s2, $p);
+
+  return $p . '%';
+}
+
+function motor_messages($uid) {
+  $query = db_select('pm_index', 'pm');
+  $query->condition('pm.recipient', $uid);
+  $query->fields('pm', array('thread_id'));
+  $result = $query->execute()->fetchAssoc();
+
+}
+
+/**
+ * Implements hook_form_alter().
+ */
+function motor_form_alter(&$form, &$form_state, $form_id) {
+  $ur_action_type = arg(5);
+  if ($form_id == 'comment_node_post_form') {
+    $form['#submit'][] = 'motor_backlog_save_comment_submit';
+  }
+
+  if ($form_id == 'user_relationships_ui_request') {
+    $form['#submit'][] = 'motor_backlog_save_user_request_submit';
+  }
+
+  if ($form_id == 'user_relationships_ui_pending_requested') {
+    if ($ur_action_type == 'disapprove') {
+      $form['#submit'][] = 'motor_backlog_save_user_disapprove_request_submit';
+    }
+    else {
+      $form['#submit'][] = 'motor_backlog_save_user_approve_request_submit';
+    }
+  }
+
+  if ($form_id == 'user_relationships_ui_remove') {
+    $form['#submit'][] = 'motor_backlog_save_user_remove_request_submit';
+  }
+
+}
+
+
+function motor_backlog_save_comment_submit($form, &$form_state) {
+  global $user;
+  $fields = [];
+  $cid = $form_state['values']['cid'];
+  $field['title'] = 'post commented';
+  $field['body'] = array('value' => $form_state['values']['comment_body'][LANGUAGE_NONE][0]['value']);
+  $field['field_user_act'] = $user->uid;
+  $comment = comment_load($cid);
+  $node = node_load($comment->nid);
+  $field['field_user_pass'] = $node->uid;
+  $field['field_comment_ref'] = $cid;
+  _motor_create_node($field);
+}
+
+function motor_backlog_save_user_request_submit($form, &$form_state) {
+  global $user;
+  $fields = [];
+  $field['title'] = 'request sent';
+  $field['field_user_act'] = $form_state['values']['requester'];
+  $field['field_user_pass'] = $form_state['values']['requestee'];
+  _motor_create_node($field);
+}
+
+function motor_backlog_save_user_approve_request_submit($form, &$form_state) {
+  global $user;
+  $fields = [];
+  $ur = user_relationships_load($form_state['values']['rid']);
+  $field['title'] = 'request approved';
+  $field['field_user_act'] = $ur->requestee_id;
+  $field['field_user_pass'] = $ur->requester_id;
+  _motor_create_node($field);
+}
+
+function motor_backlog_save_user_disapprove_request_submit($form, &$form_state) {
+  global $user;
+  $fields = [];
+  $ur = user_relationships_load($form_state['values']['rid']);
+  $field['title'] = 'request disapproved';
+  $field['field_user_act'] = $ur->requestee_id;
+  $field['field_user_pass'] = $ur->requester_id;
+  _motor_create_node($field);
+}
+
+function motor_backlog_save_user_remove_request_submit($form, &$form_state) {
+  global $user;
+  $fields = [];
+  $ur = user_relationships_load($form_state['values']['rid']);
+  $field['title'] = 'remove request';
+  $field['field_user_act'] = $ur->requestee_id;
+  $field['field_user_pass'] = $ur->requester_id;
+  _motor_create_node($field);
+}
+
+
+function _motor_create_node($fields, $type = 'backlog', $title = 'backlog', $save = TRUE) {
+  global $user;
+
+  $values = array(
+    'type' => $type,
+    'uid' => $user->uid,
+    'status' => 1,
+    'comment' => 0,
+    'promote' => 0,
+  );
+  $entity = entity_create('node', $values);
+
+  $entity_wrapper = entity_metadata_wrapper('node', $entity);
+  $entity_wrapper->language->set('en');
+
+  $entity_wrapper->revision->set(1);
+
+  foreach ($fields as $key => $value) {
+    $entity_wrapper->$key->set($value);
+  }
+
+  if ($save) {
+    $entity_wrapper->save();
+    return $entity;
+  }
+  else {
+    return $entity_wrapper;
+  }
+}
+
+function _motor_add_test_event() {
+  $params = array(
+    'Summary' => 'My Event',  //Title of the event
+    'Start' => '2016-10-11 12:30:00',
+    'End' => '2016-10-13 14:30:00',
+    'Timezone' => 'Asia/Calcutta'
+  );
+
+  gcal_event_create($params, 'vorosborisz@gmail.com', 'Borisz');
+}
+
+function motor_external_content_frame($nid) {
+  $node = node_load($nid);
+  $node_wrapper = entity_metadata_wrapper('node', $node);
+  $url = $node_wrapper->field_source->value();
+
+  $output = '<a href="#" onclick="window.history.back();" class="external-content-frame-back">' . t('< Back') . '</a>';
+
+  if (strpos($url, 'facebook') > 0) {
+    $output = '<script>window.location="' . $url . '"</script>';
+  }
+  else {
+    $output .= '<iframe width="100%" height="600" src="' . $url . '"></iframe>';
+  }
+
+  
+  $output .= views_embed_view('comment', 'block', $nid);
+
+
+  return $output;
+}
+
+function _motor_curl_get_contents($url){
+  $ch = curl_init($url);
+  curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+  curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
+  curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
+  curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
+  $data = curl_exec($ch);
+  curl_close($ch);
+  $data = json_decode($data, true);
+  return $data;
+}
+
+function _motor_get_fb_access_token() {
+  $url = 'https://graph.facebook.com/oauth/access_token?client_id=138113533468308&client_secret=74cea5bd8e7e6843756f6ec181143c15&grant_type=client_credentials&redirect_uri';
+  $response = _motor_curl_get_contents($url);
+
+  return $response;
+}
+
+function _motor_fb_post_imported_yet($id) {
+  $query = new EntityFieldQuery();
+  $query
+  ->entityCondition('entity_type', 'node')
+  ->entityCondition('bundle', 'article')
+  ->fieldCondition('field_facebook_post_id', 'value', $id, '=');
+
+  $result = $query->execute();
+
+  return $result;
+}
+
+function motor_fbimport_form($form, &$form_state) {
+  $form['fb_page_url'] = array(
+    '#type' => 'textfield',
+  );
+
+  $form['submit'] = array(
+    '#type' => 'submit',
+    '#value' => 'import',
+  );
+
+  return $form;
+}
+
+function motor_fbimport_form_submit($form, &$form_state) {
+  //$page = 'https://www.facebook.com/hasznaltauto.hu/';
+  $page = $form_state['values']['fb_page_url'];
+  
+  // Get access token.
+  $access_token = _motor_get_fb_access_token()['access_token'];
+  
+  // Get page ID nad name.
+  $graph_url = str_replace('www', 'graph', $page);
+  $response = _motor_curl_get_contents($graph_url . '?access_token=' . $access_token);
+  $page_id = $response['id'];
+  $page_name = $response['name'];
+
+  // Get the feed.
+  $feed_url = 'https://graph.facebook.com/' 
+  . $page_id 
+  . '/posts?access_token='
+  . $access_token;
+  $feed = _motor_curl_get_contents($feed_url);
+
+  dpm($feed);
+
+  foreach ($feed['data'] as $post) {
+
+    $lookup = _motor_fb_post_imported_yet($post['id']);
+
+    if (count($lookup) == 0) {
+
+      $values = array(
+        'type' => 'article',
+        'uid' => 1,
+        'status' => 1,
+        'comment' => 1,
+        'promote' => 0,
+      );
+
+      $entity = entity_create('node', $values);      
+
+      
+    }
+    else {
+        // Later existing nodes could be updated.
+      $nid = reset($lookup['node']);
+
+      $entity = node_load($nid->nid);
+    }
+
+    $entity_wrapper = entity_metadata_wrapper('node', $entity);
+      $entity_wrapper->language->set('hu');
+
+
+      $title = explode(' ', $post['message']);
+      $title_trimmed = '';
+
+      if (count($title) > 5) {
+        for ($c = 0; $c < 6; $c++) {
+          $title_trimmed .= $title[$c] . ' ';
+        }
+      }
+      else {
+        $title_trimmed = $post['message'];
+      }
+
+      $entity_wrapper->title->set($title_trimmed);
+
+      $post_id = explode('_', $post['id'])[1];
+      $source = 'https://www.facebook.com/' . $page_id . '/posts/' . $post_id . '/';
+      $entity_wrapper->field_source->set($source);
+      $entity_wrapper->field_lead->set(array('value' => $post['message']));
+      $entity_wrapper->field_facebook_post_id->set($post['id']);
+      $entity_wrapper->field_publication_date->set(strtotime($post['created_time']));
+
+      // Get media.
+      $attachments = _motor_curl_get_contents('https://graph.facebook.com/' . $post['id'] . '/attachments?access_token=' . $access_token); 
+     
+      if (strpos($attachments['data'][0]['media']['image']['src'], 'scontent') > 0) {
+        $url = $attachments['data'][0]['media']['image']['src'];
+      }
+      else {
+        $attachments = explode('url=', $attachments['data'][0]['media']['image']['src']);
+        $attachments = explode('&', $attachments[1]);
+        $attachments = $attachments[0];
+        $url = str_replace('url=', '', $attachments);   
+      }
+        
+      $url = urldecode($url);
+      dpm($url);
+      $entity_wrapper->field_image_url[0]->set($url);
+      
+      
+      $entity_wrapper->field_facebook_page_name->set($page_name);
+
+
+      try {
+          $entity_wrapper->save();
+      } catch (Exception $e) {
+          dpm('Caught exception: ' . $e->getMessage(), "\n");
+      }
+      
+  }
+}

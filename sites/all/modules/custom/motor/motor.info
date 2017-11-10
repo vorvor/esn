@@ -1,0 +1,11 @@
+name = motor
+description = motor
+package = ESN
+core = 7.x
+version = 7.x-1.x
+interface translation project = FALSE
+
+;files[] =
+files[] = views/handlers/motor_handler_userlike.inc
+files[] = js/motor.js
+;dependencies[] =

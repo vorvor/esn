@@ -1,0 +1,48 @@
+<?php
+/**
+ * @file
+ * 
+ */
+
+function news_aggregator_menu() {
+  $items = array();
+  $items['admin/news_aggregator/import'] = array(
+    'title' => t('Import RSS'),
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('news_aggregator_form'),
+    'access arguments' => array('access content'),
+    'description' => t('My form'),
+    'type' => MENU_CALLBACK,
+  );
+  return $items;
+}
+
+/**
+ * Import form
+ */
+function news_aggregator_form($form, &$form_state) {
+  $form['url'] = array(
+    '#type' => 'textfield',
+    '#title' => t('URL'),
+    '#default_value' => 'http://index.hu/24ora/rss',
+  );
+  
+  $form['submit'] = array(
+    '#type' => 'submit',
+    '#value' => 'Submit',
+  );
+  return $form;
+
+}
+
+/**
+ * Import form
+ */
+function news_aggregator_form_submit($form, &$form_state) {
+  
+  $feed = file_get_contents($form_state['values']['url']);
+  dpm($feed);
+  $xml = simplexml_load_string($feed);
+  var_dump($xml);
+
+}

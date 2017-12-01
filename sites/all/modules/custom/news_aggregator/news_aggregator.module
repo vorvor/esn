@@ -31,9 +31,12 @@ function news_aggregator_form($form, &$form_state) {
     '#type' => 'submit',
     '#value' => 'Submit',
   );
+
   return $form;
 
 }
+
+
 
 /**
  * Import form

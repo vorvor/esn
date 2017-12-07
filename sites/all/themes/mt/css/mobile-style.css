@@ -1,9 +1,30 @@
 @media (max-width: 400px) {
 
 	body {
-		background: red;
+
 		font-size: 3em;
 		line-height: 1em;
+	}
+	.pane-page-logo {
+	  width: 300px;
+	  float: left;
+	  margin: 10px;
+	  background:#ccc;
+	}
+
+	.pane-page-site-name {
+	  font-size: 1.7em;
+	  font-weight: bold;
+	  padding: 28px 0 0 220px;
+
+	}
+
+	.panels-flexible-region-3-header {
+		background:#ccc;
+	}
+
+	.views-field-title {
+      margin-bottom: 0;
 	}
 
 	.panels-flexible-1 .panels-flexible-region-inside {
@@ -25,7 +46,19 @@
     .panels-flexible-region-3-c1,
     .panels-flexible-region-3-c2,
     .panels-flexible-region-3-d,
-    .panels-flexible-region-3-e
+    .panels-flexible-region-3-e,
+    .panels-flexible-region-3-video,
+    .pane-frontpage-blocks-panel-pane-26, 
+    .pane-frontpage-blocks-panel-pane-27, 
+    .pane-frontpage-blocks-panel-pane-28,
+    .pane-frontpage-blocks-panel-pane-29, 
+    .pane-frontpage-blocks-panel-pane-30, 
+    .pane-frontpage-blocks-panel-pane-31, 
+    .pane-frontpage-blocks-panel-pane-32, 
+    .pane-frontpage-blocks-panel-pane-33, 
+    .pane-frontpage-blocks-panel-pane-34, 
+    .pane-frontpage-blocks-panel-pane-35, 
+    .pane-frontpage-blocks-panel-pane-36
      {
       width: 100%;
     }    
@@ -43,7 +76,18 @@
     .panels-flexible-region-3-c1 img,
     .panels-flexible-region-3-c2 img,
     .panels-flexible-region-3-d img,
-    .panels-flexible-region-3-e img {
+    .panels-flexible-region-3-e img,
+    .pane-frontpage-blocks-panel-pane-26 img, 
+    .pane-frontpage-blocks-panel-pane-27 img, 
+    .pane-frontpage-blocks-panel-pane-28 img,
+    .pane-frontpage-blocks-panel-pane-29 img, 
+    .pane-frontpage-blocks-panel-pane-30 img, 
+    .pane-frontpage-blocks-panel-pane-31 img, 
+    .pane-frontpage-blocks-panel-pane-32 img, 
+    .pane-frontpage-blocks-panel-pane-33 img, 
+    .pane-frontpage-blocks-panel-pane-34 img, 
+    .pane-frontpage-blocks-panel-pane-35 img, 
+    .pane-frontpage-blocks-panel-pane-36 img {
       width: 40%;
       float: left;
       margin-right: 2%;
@@ -71,6 +115,15 @@
       display: block;
     }
 
+    .panels-flexible-region .panels-flexible-region-3-banner {
+      width: 100%;
+      padding: 5%;
+    }
+
+    .panels-flexible-region .panels-flexible-region-3-banner .pane-2 img {
+      width: 100%;
+    }
+
 
     .view-display-id-panel_pane_11 {
       position: relative;
@@ -93,6 +146,8 @@
     .view-display-id-panel_pane_11 .views-field-field-image-url img {
     	width: 50%;
     }
+
+
     
 
 }

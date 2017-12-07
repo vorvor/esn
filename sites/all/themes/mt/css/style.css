@@ -2,6 +2,18 @@ body {
   font-size: 1em;
 }
 
+.pane-page-logo {
+  width: 200px;
+  float: left;
+  margin: 10px;
+}
+
+.pane-page-site-name {
+  font-size: 3em;
+  font-weight: bold;
+  padding: 28px 0 0 220px;
+}
+
 .panels-flexible-1 {
   clear: both;
 }

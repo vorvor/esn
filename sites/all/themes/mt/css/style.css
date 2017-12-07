@@ -1,5 +1,5 @@
 body {
-  
+  font-size: 1em;
 }
 
 .panels-flexible-1 {
@@ -753,7 +753,7 @@ form#privatemsg-new .form-actions #edit-cancel {
 }
 
 .view-display-id-panel_pane_1 img {
-  width: 633px;
+  width: 100%;
 }
 
 .view-display-id-panel_pane_2 img {
@@ -797,7 +797,7 @@ form#privatemsg-new .form-actions #edit-cancel {
   margin: 0;
   padding: 0;
   color: #0072b9;
-  font-size: 14px;
+  font-size: 0.7em;
 }
 
 .view-frontpage-blocks .views-field-field-category ul li:before,
@@ -897,6 +897,10 @@ form#privatemsg-new .form-actions #edit-cancel {
 
 .panels-flexible-region .panels-flexible-region-3-banner {
   width: 32%;
+}
+
+.panels-flexible-region .panels-flexible-region-3-banner .pane-2 {
+  display: none;
 }
 
 .panels-flexible-region-3-video {

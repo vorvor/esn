@@ -59,6 +59,13 @@ function motor_menu() {
     'type' => MENU_NORMAL_ITEM,
    );
 
+  $items['esn-frontpage'] = array(
+    'title' => 'ESN front page response',
+    'page callback' => 'motor_esn_response',
+    'access arguments' => array('access content'),
+    'type' => MENU_CALLBACK,
+   );
+
   return $items;
 }
 
@@ -709,6 +716,7 @@ function motor_tricky_layout_setup_form($form, &$form_state) {
 
 function motor_tricky_source($order, $type = 'main') {
 
+
   //$hour = date('H');
   $hour = variable_get('motor_esn_aggregator', 9);
 
@@ -769,10 +777,28 @@ function motor_tricky_source($order, $type = 'main') {
   return $node_wrapper->field_channel->value();
 }
 
+function motor_services_resources() {
+  return array(
+    'retrive_news_frontpage' => array(
+      'retrieve' => array(
+        'help' => 'Retrieves news frontpage',
+        'callback' => '_motor_retrieve_frontpage',
+        'access callback' => '_note_service_access',
+        'access arguments' => array('view'),
+        'access arguments append' => TRUE,
+        'args' => array(),
+      ),
+    ),
+  );
+}
 
+function _motor_retrieve_frontpage() {
+  return (object)array('text' => 'hey!');
+}
 
+function motor_esn_response() {
+  $output = 'Hey!';
 
-
-
-
+  print $output;
+}
 

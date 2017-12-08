@@ -526,7 +526,7 @@ function motor_external_content_frame($nid) {
 
   $output = '<a href="#" onclick="window.history.back();" class="external-content-frame-back">' . t('< Back') . '</a>';
 
-  if (strpos($url, 'facebook') > 0 || strpos($url, 'totalcar.hu/tv') > 0) {
+  if (strpos($url, 'facebook') > 0 || strpos($url, 'totalcar.hu') > 0) {
     $output = '<script>window.location="' . $url . '"</script>';
   }
   else {

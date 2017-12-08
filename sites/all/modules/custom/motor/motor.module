@@ -732,13 +732,13 @@ function motor_tricky_source($order, $type = 'main') {
   elseif ($type == 'second') {
 
     $which = (($hour - 9) % 5) + 5 + $order;
-    $which = $which % 5;
+
     $nqid = 1;
   }
   elseif ($type == 'third') {
 
     $which = (($hour - 9) % 4) + 5 + $order;
-    $which = $which % 4;
+
     $nqid = 1;
   }
   elseif ($type == 'video') {
@@ -752,7 +752,7 @@ function motor_tricky_source($order, $type = 'main') {
   else {
 
     $which = (($hour - 9) % 5) + 15 + $order;
-    $which = $which % 5;
+
     $nqid = 1;
   }
 
@@ -776,8 +776,12 @@ function motor_tricky_source($order, $type = 'main') {
   }
 
   //dpm($nodes);
-
-  $node_wrapper = entity_metadata_wrapper('node', $nodes[$which]);
+  if (isset($nodes[$which])) {
+    $node_wrapper = entity_metadata_wrapper('node', $nodes[$which]);
+  }
+  else {
+    $node_wrapper = entity_metadata_wrapper('node', $nodes[10]); 
+  }
 
   //dpm($node_wrapper->field_channel->value());
 

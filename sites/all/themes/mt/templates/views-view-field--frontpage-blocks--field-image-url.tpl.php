@@ -24,6 +24,8 @@
 ?>
 <?php 
 
+  	//dpm($row);
+
   if (strpos($output, 'mp3') > 0) {
     print '<img src="http://static.adweek.com/adweek.com-prod/wp-content/uploads/files/2016_Jul/iab-podcast-event-hed-2016.png"><br /><audio controls><source src="' . $output . '" type="audio/mpeg">Your browser does not support the audio element.</audio>'; 
   }

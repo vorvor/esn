@@ -718,7 +718,7 @@ function motor_tricky_source($order, $type = 'main') {
 
 
   $hour = date('H');
-  $hour = variable_get('motor_esn_aggregator', 9);
+  //$hour = variable_get('motor_esn_aggregator', 9);
 
   $max = ['main' => 5, 'second' => 4, 'third' => 6, 'video' => 3, 'rest' => 1];
 
@@ -726,26 +726,33 @@ function motor_tricky_source($order, $type = 'main') {
   if ($type == 'main') {
 
     $which = (($hour - 9) % $max['main']) + $order;
+    $which = $which % $max['main'];
     $nqid = 1;
   }
   elseif ($type == 'second') {
 
     $which = (($hour - 9) % 5) + 5 + $order;
+    $which = $which % 5;
     $nqid = 1;
   }
   elseif ($type == 'third') {
 
     $which = (($hour - 9) % 4) + 5 + $order;
+    $which = $which % 4;
     $nqid = 1;
   }
   elseif ($type == 'video') {
-    
+
     $which = (($hour - 9) % 3) + $order;
+    $which = $which % 3;
+
     $nqid = 2;
 
   }
   else {
+
     $which = (($hour - 9) % 5) + 15 + $order;
+    $which = $which % 5;
     $nqid = 1;
   }
 

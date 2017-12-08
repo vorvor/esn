@@ -718,7 +718,7 @@ function motor_tricky_source($order, $type = 'main') {
 
 
   $hour = date('H');
-  //$hour = variable_get('motor_esn_aggregator', 9);
+  $hour = variable_get('motor_esn_aggregator', 9);
 
   $max = ['main' => 5, 'second' => 4, 'third' => 6, 'video' => 3, 'rest' => 1];
 

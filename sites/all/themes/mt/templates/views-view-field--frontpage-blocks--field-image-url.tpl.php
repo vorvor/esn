@@ -29,7 +29,7 @@
   }
 
   if (strpos($output, 'jpg') > 0 || strpos($output, 'png') > 0 || strpos($output, 'aspx') > 0) {
-    print '<img src="' . $output . '">';
+    print '<a href="/post/' . $row->nid . '"><img src="' . $output . '"></a>';
   }
 
  ?>

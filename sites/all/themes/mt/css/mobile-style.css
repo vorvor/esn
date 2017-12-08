@@ -3,7 +3,7 @@
 	body {
 
 		font-size: 3em;
-		line-height: 1em;
+		line-height: 1.3em;
 	}
 	.pane-page-logo {
 	  width: 300px;
@@ -17,6 +17,15 @@
 	  font-weight: bold;
 	  padding: 28px 0 0 220px;
 
+	}
+
+	.view-frontpage-blocks .views-row {
+		margin-bottom: 0.4em;
+	}
+
+	.views-field-title {
+		position: relative;
+		z-index: 1000;
 	}
 
 	.panels-flexible-region-3-header {
@@ -125,7 +134,8 @@
     }
 
 
-    .view-display-id-panel_pane_11 {
+    .view-display-id-panel_pane_11,
+    .view-display-id-panel_pane_13 {
       position: relative;
     }
 
@@ -133,21 +143,37 @@
     .view-display-id-panel_pane_11 .views-field-field-source-1,
     .view-display-id-panel_pane_11 .views-field-field-lead,
     .view-display-id-panel_pane_11 .views-field-field-tags,
-    .view-display-id-panel_pane_11 .views-field-comment-count
+    .view-display-id-panel_pane_11 .views-field-comment-count,
+    .view-display-id-panel_pane_13 .views-field-title,
+    .view-display-id-panel_pane_13 .views-field-field-source-1,
+    .view-display-id-panel_pane_13 .views-field-field-lead,
+    .view-display-id-panel_pane_13 .views-field-field-tags,
+    .view-display-id-panel_pane_13 .views-field-comment-count
      {
     	margin-left: 42%;
     }
   
-    .view-display-id-panel_pane_11 .views-field-field-image-url {
+    .view-display-id-panel_pane_11 .views-field-field-image-url,
+    .view-display-id-panel_pane_13 .views-field-field-image-url {
       position: absolute;
       top: 0;
+      width: 80%;
     }
 
-    .view-display-id-panel_pane_11 .views-field-field-image-url img {
+    .view-display-id-panel_pane_11 .views-field-field-image-url img,
+    .view-display-id-panel_pane_13 .views-field-field-image-url img {
     	width: 50%;
     }
 
 
+
+	.external-content-frame-back {
+	    font-size: 0.7em;
+	    padding: 4px 12px;
+	    height: 50px;
+	    padding-top: 2px;
+	    line-height: 1.4em;
+	}
     
 
 }

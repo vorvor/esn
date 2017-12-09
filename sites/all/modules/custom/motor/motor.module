@@ -780,7 +780,7 @@ function motor_tricky_source($order, $type = 'main') {
     $node_wrapper = entity_metadata_wrapper('node', $nodes[$which]);
   }
   else {
-    $node_wrapper = entity_metadata_wrapper('node', $nodes[10]); 
+    $node_wrapper = entity_metadata_wrapper('node', $nodes[2]); 
   }
 
   //dpm($node_wrapper->field_channel->value());

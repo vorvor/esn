@@ -36,5 +36,7 @@
     $output = $parts[0]; 
     print $output; 
   }
+
+  motor_tricky_source(4);
   
 ?>

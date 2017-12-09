@@ -28,6 +28,10 @@
 
   global $used;
 
+  if (empty($used)) {
+  	$used = array();
+  }
+
   if (empty($output)) {
     $output = 'http://www.allfordmustangs.com/photopost/data/3817/0.jpg';
     $images = file_scan_directory('public://dummy_images', '/.*/');

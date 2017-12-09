@@ -781,24 +781,26 @@ function motor_tricky_source($order, $type = 'main') {
 }
 
 function motor_node_presave($node) {
-  $node_wrapper = entity_metadata_wrapper('node', $node);
-  $image = $node_wrapper->field_image->value();
+  if ($node->type == 'article') {
+    $node_wrapper = entity_metadata_wrapper('node', $node);
+    $image = $node_wrapper->field_image->value();
 
-  if (empty($image)) {
+    if (empty($image)) {
 
-    $url = $node_wrapper->field_image_url[0]->value();
-    if (!empty($url)) {
-      $url = str_replace('https', 'http', $url);
-      $file = system_retrieve_file($url, 'public://', TRUE);
-      $file = (array)$file;
-      $file['display'] = 1;
-      $file['description'] = 'ENA image';
+      $url = $node_wrapper->field_image_url[0]->value();
+      if (!empty($url)) {
+        $url = str_replace('https', 'http', $url);
+        $file = system_retrieve_file($url, 'public://', TRUE);
+        $file = (array)$file;
+        $file['display'] = 1;
+        $file['description'] = 'ENA image';
 
-      if (isset($file['fid'])) { 
-          $node->field_image[LANGUAGE_NONE][0] = $file;
+        if (isset($file['fid'])) { 
+            $node->field_image[LANGUAGE_NONE][0] = $file;
+        }
       }
     }
-  }
+  }  
 
 
 }

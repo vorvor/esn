@@ -13,6 +13,7 @@ body {
   font-size: 3em;
   font-weight: bold;
   padding: 28px 0 0 220px;
+  height: 80px;
 }
 
 .panels-flexible-1 {
@@ -954,7 +955,12 @@ form#privatemsg-new .form-actions #edit-cancel {
 
 
 
-
+.page-taxonomy-term .view-frontpage-blocks .views-row {
+  width: 31%;
+  margin-left: 1%;
+  float: left;
+  height: 620px;
+}
 
 
 

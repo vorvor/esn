@@ -3,6 +3,7 @@
     attach: function (context, settings) {
 
       //code starts
+      /*
       $('.decide-option').click(function() {
         nid1 = $(this).attr('data-nid');
         nid2 = $(this).attr('data-other-nid');
@@ -76,7 +77,40 @@
             $('#notification-bar').text('An error occurred');
           }
         });
+      }) */
+
+
+      $('.views-field-title a, .views-field-field-image-url a').click(function(e) {
+        e.preventDefault();
+        url = $(this).data('source');
+     
+
+        if (url.indexOf('totalcar') > -1 || url.indexOf('facebook') > -1) {
+          self.location = url;
+        }
+        else {
+          $('#popup iframe').attr('src', url).load(function() {
+            $('#popup').show(); 
+            $('html, body').css({
+              overflow: 'hidden',
+              height: '100%'
+            });
+          });
+          
+          
+        }
+
       })
-    }
+
+      $('#close-popup').click(function() {
+        $('#popup').hide();
+        $('html, body').css({
+          overflow: 'auto',
+          height: 'auto'
+        });
+      })
+
+    } 
+
   };
 })(jQuery);

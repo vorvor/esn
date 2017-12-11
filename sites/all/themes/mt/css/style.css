@@ -286,6 +286,8 @@ form#privatemsg-new .form-actions #edit-cancel {
   margin-top:20px;
 }
 
+
+
 .pane-users-panel-pane-4 .pane-title,
 .pane-users-panel-pane-3 .pane-title,
 .pane-users-panel-pane-2 .pane-title,
@@ -758,6 +760,7 @@ form#privatemsg-new .form-actions #edit-cancel {
 
 .views-field-title a {
   color: #000;
+  text-decoration: none;
 }
 
 .view-display-id-panel_pane_1 .views-field-title,
@@ -856,8 +859,8 @@ form#privatemsg-new .form-actions #edit-cancel {
     display: block;
     color: #fff;
     padding: 8px 12px;
-    height: 88px;
-    padding-top: 54px;
+    height: 51px;
+    padding-top: 14px;
 }
 
 .external-content-frame-back:hover {
@@ -908,11 +911,12 @@ form#privatemsg-new .form-actions #edit-cancel {
   margin-right: 5px;
 }
 
-.panels-flexible-region .panels-flexible-region-3-banner {
+.panels-flexible-region-3-banner {
   width: 32%;
 }
 
-.panels-flexible-region .panels-flexible-region-3-banner .pane-2 {
+.panels-flexible-region-3-banner .pane-2,
+.panels-flexible-region-3-banner-inside .pane-2 {
   display: none;
 }
 

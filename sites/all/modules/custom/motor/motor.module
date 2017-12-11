@@ -825,12 +825,58 @@ function _motor_retrieve_frontpage() {
 }
 
 function motor_esn_response() {
-  $output = 'Hey!';
-  $url = 'http://cdn-7.motorsport.com/images/amp/YMVXqj36/s1/automotive-autos-rovat-2017-vw-polo-gt-6760437.jpg';
-  $file = system_retrieve_file($url, 'public://', TRUE);
+  $output = array();
 
-  dpm($file);
+  module_load_include('inc', 'ctools', 'page_manager/plugins/tasks/page');
+  module_load_include('inc', 'ctools', 'includes/context');
 
-  return $output;
+  $subtask_id = 'front_page';
+  $page = page_manager_page_load($subtask_id);
+  $task = page_manager_get_task($page->task);
+  $subtask = page_manager_get_task_subtask($task, $subtask_id);
+  $context_content = 'The content to pass as the string context argument';
+  $context = new ctools_context('string', $context_content);
+  $context->keyword = 'argument_name'; // The argument name, is used when replacing content in markup.
+  $context->plugin = 'string';
+  $contexts[] = $context;
+  $args = array($context_content);
+
+  ctools_include('context-task-handler');
+  $html = ctools_context_handler_render($task, $subtask, $contexts, $args);
+  $html = $html['content'];
+  $popup = '<div id="popup" style="display: none;" ><div style="width:100%;height:600px;"><img src="/sites/default/files/loader.gif"></div><a href="#" onclick="window.history.back();" class="external-content-frame-back">&lt; Back</a><iframe width="100%" height="600"></iframe></div>';
+
+  $output['html'] = $popup . $html;
+  $output['head'] = '<meta name="viewport" content="width=device-width">';
+  $output['head'] .= drupal_get_css();
+  /*$output['css'] = str_replace('@import url(', '<link rel="stylesheet" type="text/css" href=', $output['css']);
+  $output['css'] = str_replace(');', '>', $output['css']);
+  $output['css'] = str_replace('<style>', '', $output['css']);
+  $output['css'] = str_replace('</style>', '', $output['css']);*/
+
+  
+
+  $html = preg_replace_callback('<a href="\/post\/(.*?)">', '_motor_get_post_url', $html);
+
+  print_r($html);
+
+  print drupal_json_output($output);
+
+  if ($_SERVER['REDIRECT_HTTP_AUTHORIZATION'] == 'xyz') {
+    
+  }
+  else {
+    print 'no access';
+  }
+
+
+
+  
+}
+
+function _motor_get_post_url($matches) {
+  $node = node_load($matches[1]);
+  $node_wrapper = entity_metadata_wrapper('node', $node);
+  return $node_wrapper->field_source->value(); 
 }
 

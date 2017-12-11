@@ -51,7 +51,7 @@
   }
 
   if (strpos($output, 'jpeg') > 0 || strpos($output, 'jpg') > 0 || strpos($output, 'png') > 0 || strpos($output, 'aspx') > 0) {
-    print '<a href="/post/' . $row->nid . '"><img src="' . $output . '"></a>';
+    print '<a href="#" data-source="' . $row->field_field_source[0]['raw']['value'] . '"><img src="' . $output . '"></a>';
   }
 
  ?>

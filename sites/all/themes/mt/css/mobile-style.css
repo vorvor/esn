@@ -1,9 +1,10 @@
-@media (max-width: 400px) {
+
 
 	body {
 
 		font-size: 3em;
 		line-height: 1.3em;
+
 	}
 
 	.pane-page-logo {
@@ -178,4 +179,3 @@
 	}
     
 
-}

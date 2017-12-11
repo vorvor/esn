@@ -80,6 +80,7 @@
       }) */
 
 
+      /*
       $('.views-field-title a, .views-field-field-image-url a').click(function(e) {
         e.preventDefault();
         url = $(this).data('source');
@@ -109,6 +110,7 @@
           height: 'auto'
         });
       })
+      */
 
     } 
 

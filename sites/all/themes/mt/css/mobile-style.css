@@ -193,3 +193,7 @@ body {
   height: auto;
 }
 
+.pane-page-title h1 {
+  font-size: 2em;
+}
+

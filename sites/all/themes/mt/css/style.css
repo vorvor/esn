@@ -20,7 +20,8 @@ body {
   clear: both;
 }
 
-.panels-flexible-3 {
+.page-taxonomy-term .panels-flexible-9,
+.panels-flexible-1 {
     width: 1300px;
     margin: 0 auto;
 }
@@ -29,7 +30,8 @@ body {
   display: none;
 }
 
-.panels-flexible-region-1-center
+.panels-flexible-region-1-center,
+.panels-flexible-region-9-center
 {
   width: 100%;
 }
@@ -767,6 +769,14 @@ form#privatemsg-new .form-actions #edit-cancel {
 .view-display-id-panel_pane_1 .views-field-title,
 .view-display-id-panel_pane_2 .views-field-title {
   font-size: 38px;
+}
+
+.pane-page-title {
+  padding-left: 30px;
+}
+
+.page-taxonomy-term .view-display-id-panel_pane_2 .views-field-title {
+  font-size: 1em;
 }
 
 .view-display-id-panel_pane_1 img {

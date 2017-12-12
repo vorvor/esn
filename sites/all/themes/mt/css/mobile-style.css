@@ -19,6 +19,7 @@ body {
   font-weight: bold;
   padding: 28px 0 0 220px;
   background:#ccc;
+  height: 110px;
 
 }
 
@@ -188,4 +189,7 @@ body {
     font-size: 1em;
 }
     
+.page-taxonomy-term .view-frontpage-blocks .views-row {
+  height: auto;
+}
 

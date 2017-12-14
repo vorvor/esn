@@ -24,9 +24,8 @@
 ?>
 <?php 
 
-  	//dpm($row);
+global $used;
 
-  global $used;
 
   if (empty($used)) {
   	$used = array();
@@ -42,16 +41,17 @@
     }
     $used[] = $output;
    
-    $output = str_replace('public://', '/sites/default/files/', $output);
+    $output = '<img src="' . file_create_url($output). '">';
     
   }
+  
 
-  if (strpos($output, 'mp3') > 0) {
-    print '<img src="http://static.adweek.com/adweek.com-prod/wp-content/uploads/files/2016_Jul/iab-podcast-event-hed-2016.png"><br /><audio controls><source src="' . $output . '" type="audio/mpeg">Your browser does not support the audio element.</audio>'; 
-  }
 
-  if (strpos($output, 'jpeg') > 0 || strpos($output, 'jpg') > 0 || strpos($output, 'png') > 0 || strpos($output, 'aspx') > 0) {
-    print '<a href="#" data-source="' . $row->field_field_source[0]['raw']['value'] . '"><img src="' . $output . '"></a>';
-  }
+  print $output;
+  
 
- ?>
+
+
+
+
+?>

@@ -33,25 +33,34 @@ global $used;
 
   if (empty($output)) {
     $output = 'http://www.allfordmustangs.com/photopost/data/3817/0.jpg';
-    $images = file_scan_directory('public://dummy_images', '/.*/');
-    $urls = array_keys($images);
-    $output = $urls[rand(0, count($images) - 1)];
-    while (in_array($output, $used)) {
+
+
+    if (file_exists('sites/default/files/dummy_images')) {
+
+      $images = file_scan_directory('public://dummy_images', '/.*/');
+      $urls = array_keys($images);
       $output = $urls[rand(0, count($images) - 1)];
+      while (in_array($output, $used)) {
+        $output = $urls[rand(0, count($images) - 1)];
+      }
+      $used[] = $output;
+     
+      $output = '<a href="' . drupal_get_path_alias('node/' . $row->nid) . '"><img src="' . file_create_url($output). '"></a>';
     }
-    $used[] = $output;
-   
-    $output = '<img src="' . file_create_url($output). '">';
+    else {
+      drupal_set_message('No dummy image folder.', 'error');
+    }
     
   }
   
 
 
-  print $output;
+  ?>
+  <?php print $output; ?>
   
 
 
 
 
 
-?>
+

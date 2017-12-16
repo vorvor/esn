@@ -16,6 +16,10 @@ body {
   height: 80px;
 }
 
+.pane-page-site-name a {
+  text-decoration: none;
+}
+
 .panels-flexible-1 {
   clear: both;
 }
@@ -965,7 +969,8 @@ form#privatemsg-new .form-actions #edit-cancel {
 
 
 
-.page-taxonomy-term .view-frontpage-blocks .views-row {
+.page-taxonomy-term .view-frontpage-blocks .views-row,
+.panels-flexible-11 .view-frontpage-blocks .views-row {
   width: 31%;
   margin-left: 1%;
   float: left;

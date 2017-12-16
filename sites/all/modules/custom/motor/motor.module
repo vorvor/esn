@@ -59,9 +59,25 @@ function motor_menu() {
     'type' => MENU_NORMAL_ITEM,
    );
 
-  $items['esn-frontpage'] = array(
+  $items['ena-frontpage'] = array(
     'title' => 'ESN front page response',
-    'page callback' => 'motor_esn_response',
+    'page callback' => 'motor_ena_response_frontpage',
+    'access arguments' => array('access content'),
+    'type' => MENU_CALLBACK,
+   );
+  
+  $items['ena-article/%'] = array(
+    'title' => 'ESN front page response',
+    'page callback' => 'motor_ena_response_article',
+    'page arguments' => array(1),
+    'access arguments' => array('access content'),
+    'type' => MENU_CALLBACK,
+   );
+
+  $items['ena-taxonomy/%'] = array(
+    'title' => 'ESN front page response',
+    'page callback' => 'motor_ena_response_taxonomy',
+    'page arguments' => array(1),
     'access arguments' => array('access content'),
     'type' => MENU_CALLBACK,
    );
@@ -800,6 +816,8 @@ function motor_node_presave($node) {
         }
       }
     }
+
+  
   }  
 
 
@@ -824,17 +842,18 @@ function _motor_retrieve_frontpage() {
   return (object)array('text' => 'hey!');
 }
 
-function motor_esn_response() {
+function motor_ena_response_frontpage($subtask_id = 'front_page', $context_content = '') {
   $output = array();
 
   module_load_include('inc', 'ctools', 'page_manager/plugins/tasks/page');
   module_load_include('inc', 'ctools', 'includes/context');
 
-  $subtask_id = 'front_page';
+  //$subtask_id = 'front_page';
   $page = page_manager_page_load($subtask_id);
+
   $task = page_manager_get_task($page->task);
   $subtask = page_manager_get_task_subtask($task, $subtask_id);
-  $context_content = 'The content to pass as the string context argument';
+  //$context_content = 'The content to pass as the string context argument';
   $context = new ctools_context('string', $context_content);
   $context->keyword = 'argument_name'; // The argument name, is used when replacing content in markup.
   $context->plugin = 'string';
@@ -843,39 +862,58 @@ function motor_esn_response() {
 
   ctools_include('context-task-handler');
   $html = ctools_context_handler_render($task, $subtask, $contexts, $args);
-  //$html = $html['content']['#markup'];
+  //$html = $html['content']['#markup'];  
 
   $output['html'] = $html;
   $output['head'] = '<meta name="viewport" content="width=device-width">';
   $output['head'] .= drupal_get_css();
-  /*$output['css'] = str_replace('@import url(', '<link rel="stylesheet" type="text/css" href=', $output['css']);
-  $output['css'] = str_replace(');', '>', $output['css']);
-  $output['css'] = str_replace('<style>', '', $output['css']);
-  $output['css'] = str_replace('</style>', '', $output['css']);*/
 
-  
-
-  //$html = preg_replace_callback('<a href="\/post\/(.*?)">', '_motor_get_post_url', $html);
-
-
-
-  
+    
 
   if ($_SERVER['REDIRECT_HTTP_AUTHORIZATION'] == 'xyz') {
     print drupal_json_output($output); 
   }
   else {
     print 'no access';
-  }
-
-
+  }  
 
   
 }
 
-function _motor_get_post_url($matches) {
-  $node = node_load($matches[1]);
+function motor_ena_response_article($path) {
+  $path = drupal_lookup_path('source', 'hirek/' . $path);
+  $parts = explode('/', $path);
+  $node = node_load($parts[1]);
   $node_wrapper = entity_metadata_wrapper('node', $node);
-  return $node_wrapper->field_source->value(); 
+
+  $output = '<div class="panel-pane pane-page-logo"><a href="/" rel="home" id="logo" title="Home"><img src="http://esn.dev/sites/default/files/ecdh-logo.png" alt="Home"></a></div>';
+  $output .= '<div class="panel-pane pane-page-site-name"><a href="/" class="active">ECDH News Aggregator</a></div>';
+  $output .= '<a href="#" onclick="window.history.back();" class="external-content-frame-back">' . t('< Back') . '</a>';
+  $url = $node_wrapper->field_source->value();
+
+  if (strpos($url, 'facebook') > 0 || strpos($url, 'totalcar.hu') > 0) {
+    $output = '<script>window.location="' . $url . '"</script>';
+  }
+  else {
+    $output .= '<iframe width="100%" height="600" src="' . $url . '"></iframe>';
+  }
+
+
+  return $output; 
 }
+
+function motor_ena_response_taxonomy($name) {
+  $term = taxonomy_get_term_by_name($name);
+  $term = reset($term);
+  return motor_ena_response_frontpage('custom_taxonomy_page', $term->tid);
+}
+
+function _motor_get_post_url($matches) {
+  module_load_include('inc', 'pathauto', 'pathauto');
+
+  $node = node_load($matches[1]);
+  return 'a href="/remote/hirek/' . pathauto_cleanstring($node->title) . '"'; 
+}
+
+
 

@@ -878,9 +878,7 @@ function motor_ena_response_frontpage($subtask_id = 'front_page', $context_conte
   }
   else {
     print 'no access';
-  }
-
-   return 'A';   
+  } 
   
 }
 

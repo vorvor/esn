@@ -13,7 +13,7 @@
   $url = $node_wrapper->field_source->value();
 
   $output = '<div id="embed-header"><a href="/"><img src="/sites/all/themes/mt/header.png"></a></div>';
-  $output .= '<div><a href="/" class="external-content-frame-back">' . t('< Back') . '</a></div>';
+  $output .= '<div id="embed-back"><a href="/" class="external-content-frame-back">' . t('< Back') . '</a></div>';
 
   if (strpos($url, 'facebook') > 0 || strpos($url, 'totalcar.hu') > 0) {
     $output = '<script>window.location="' . $url . '"</script>';

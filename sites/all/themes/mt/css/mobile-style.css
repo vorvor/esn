@@ -7,6 +7,12 @@ body {
 
 }
 
+.temporary-ecdh-header img {
+  max-width: none;
+  width: 3000px;
+
+}
+
 .pane-page-logo {
   width: 300px;
   float: left;

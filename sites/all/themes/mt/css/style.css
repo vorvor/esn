@@ -2,6 +2,15 @@ body {
   font-size: 1em;
 }
 
+
+.temporary-ecdh-header p  {
+  margin: 0;
+}
+
+#embed-header {
+  height: 73px;
+}
+
 .pane-page-logo {
   width: 200px;
   float: left;

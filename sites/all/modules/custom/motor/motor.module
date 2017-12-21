@@ -862,8 +862,7 @@ function motor_ena_response_frontpage($subtask_id = 'front_page', $context_conte
 
   ctools_include('context-task-handler');
   $html = ctools_context_handler_render($task, $subtask, $contexts, $args);
-  //$html = $html['content']['#markup'];  
-  //$html['content']['#markup'] = preg_replace('/<a href="(.*?)"/', '<a href="/ena\\1"',  $html['content']['#markup']);
+  //$html = $html['content']['#markup']; 
 
 
 

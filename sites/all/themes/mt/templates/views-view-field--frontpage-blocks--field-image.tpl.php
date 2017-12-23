@@ -45,7 +45,9 @@ global $used;
       }
       $used[] = $output;
      
-      $output = '<a href="' . drupal_get_path_alias('node/' . $row->nid) . '"><img src="' . file_create_url($output). '"></a>';
+      $url = $output;
+      $image_style = theme('image_style', array('style_name' => 'medium', 'path' => $url)); 
+      $output = '<a href="' . drupal_get_path_alias('node/' . $row->nid) . '">' . $image_style . '</a>';
     }
     else {
       drupal_set_message('No dummy image folder.', 'error');

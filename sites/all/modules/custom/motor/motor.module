@@ -59,9 +59,9 @@ function motor_menu() {
     'type' => MENU_NORMAL_ITEM,
    );
 
-  $items['ena-frontpage'] = array(
+  $items['ena-frontpage-html'] = array(
     'title' => 'ESN front page response',
-    'page callback' => 'motor_ena_response_frontpage',
+    'page callback' => 'motor_ena_response_frontpage_html',
     'access arguments' => array('access content'),
     'type' => MENU_CALLBACK,
    );
@@ -78,6 +78,13 @@ function motor_menu() {
     'title' => 'ESN front page response',
     'page callback' => 'motor_ena_response_taxonomy',
     'page arguments' => array(1),
+    'access arguments' => array('access content'),
+    'type' => MENU_CALLBACK,
+   );
+
+  $items['ena-frontpage-json'] = array(
+    'title' => 'ESN front page response',
+    'page callback' => 'motor_ena_response_frontpage_json',
     'access arguments' => array('access content'),
     'type' => MENU_CALLBACK,
    );
@@ -752,7 +759,7 @@ function motor_tricky_source($order, $type = 'main') {
   }
   elseif ($type == 'third') {
 
-    $which = ($hour + $order) % 5 + 10;
+    $which = ($hour + $order) % 6 + 9;
     $nqid = 1;
   }
   elseif ($type == 'video') {
@@ -788,7 +795,11 @@ function motor_tricky_source($order, $type = 'main') {
   }
 
   
+  //dpm('W' . $which);
+
   $node_wrapper = entity_metadata_wrapper('node', $nodes[$which]);
+
+  //dpm($order . ':' . $node_wrapper->field_channel->value());
 
   return $node_wrapper->field_channel->value();
 }
@@ -839,7 +850,7 @@ function _motor_retrieve_frontpage() {
   return (object)array('text' => 'hey!');
 }
 
-function motor_ena_response_frontpage($subtask_id = 'front_page', $context_content = '') {
+function motor_ena_response_frontpage_html($subtask_id = 'front_page', $context_content = '') {
   $output = array();
 
   module_load_include('inc', 'ctools', 'page_manager/plugins/tasks/page');
@@ -847,9 +858,11 @@ function motor_ena_response_frontpage($subtask_id = 'front_page', $context_conte
 
   //$subtask_id = 'front_page';
   $page = page_manager_page_load($subtask_id);
-
   $task = page_manager_get_task($page->task);
   $subtask = page_manager_get_task_subtask($task, $subtask_id);
+
+    dpm($subtask);
+  return 'A';
   //$context_content = 'The content to pass as the string context argument';
   $context = new ctools_context('string', $context_content);
   $context->keyword = 'argument_name'; // The argument name, is used when replacing content in markup.
@@ -911,6 +924,190 @@ function _motor_get_post_url($matches) {
 
   $node = node_load($matches[1]);
   return 'a href="/remote/hirek/' . pathauto_cleanstring($node->title) . '"'; 
+}
+
+function motor_get_last_article_from_source($source) {
+  $query = new EntityFieldQuery();
+  $query
+  ->entityCondition('entity_type', 'node')
+  ->entityCondition('bundle', 'article')
+  ->fieldCondition('field_channel', 'value', $source, '=')
+  ->range(0,1);
+
+  $result = $query->execute();
+
+  return $result;
+
+}
+
+function motor_load_layout_block($order) {
+  global $used;
+
+  if (empty($used)) {
+    $used = array();
+  }
+
+  if (!is_array($order)) {
+    $items[] = $order;
+  }
+  else {
+    $items = $order;
+  }
+
+  $block = [];
+
+
+  foreach ($items as $item) {
+
+
+    $main_article = motor_get_last_article_from_source(motor_tricky_source($item, 'main'));
+    $reset = reset($main_article);
+    $node = node_load(array_keys($reset)[0]);
+    $node_wrapper = entity_metadata_wrapper('node', $node);
+
+    $fields = array();
+    $fields['title'] = $node_wrapper->title->value();
+    $fields['lead'] = $node_wrapper->field_lead->value->value();
+    
+    // image
+    $image = $node_wrapper->field_image->value();
+    $fields['image'] = array();
+
+    if (!empty($image)) {
+      $thumb = image_style_url('medium', $image['uri']);
+      $fields['image']['filename'] = $image['filename'];
+      $fields['image']['uri'] = $thumb;
+      $fields['image']['filesize'] = $image['filesize'];
+      $fields['image']['filemime'] = $image['filemime'];
+    }
+    else {
+      if (file_exists('sites/default/files/dummy_images')) {
+
+        $images = file_scan_directory('public://dummy_images', '/.*/');
+        $urls = array_keys($images);
+        $output = $urls[rand(0, count($images) - 1)];
+        while (in_array($output, $used)) {
+          $output = $urls[rand(0, count($images) - 1)];
+        }
+        $used[] = $output;
+       
+        $url = $output;
+        $fields['image']['uri'] = image_style_url('medium', $url); 
+      }
+    }
+
+    //source
+    $fields['source'] = $node_wrapper->field_channel->value();
+
+    //url
+    $fields['url'] = $node_wrapper->field_source->value();  
+    
+    // tags
+    $tags = $node_wrapper->field_tags->value();
+    foreach ($tags as $tag) {
+      $fields['tags'][] = $tag->name;
+    }
+
+    $block[] = $fields;
+
+  }
+
+  if (count($block) < 2) {
+    $block = reset($block);
+  }
+
+  return $block;
+}
+
+function motor_ena_response_frontpage_json() {
+
+  if ($_SERVER['REDIRECT_HTTP_AUTHORIZATION'] == 'xyz') { 
+
+    try {
+  
+      foreach ($_POST as $key => $value) {
+        if ($key == 'block') {
+          switch ($value) {
+            case 'main-article': 
+              $data = motor_load_layout_block(1);
+              break;
+            case 'main-right':
+              $data = motor_load_layout_block([2,3,4,5]);
+              break;
+            case 'first-row':
+              $data = [];
+              $data['main-article'] = motor_load_layout_block(1);
+              $data['main-right'] = motor_load_layout_block([2,3,4,5]);
+              break;
+            case 'secondary-col1':
+              $data = motor_load_layout_block(6);
+              break;
+            case 'secondary-col2':
+              $data = motor_load_layout_block(7);
+              break;
+            case 'secondary-col3':
+              $data = motor_load_layout_block([8,9]);
+              break;
+            case 'second-row':
+              $data = [];
+              $data['secondary-col-1'] = motor_load_layout_block(6);
+              $data['secondary-col-2'] = motor_load_layout_block(7);
+              $data['secondary-col-3'] = motor_load_layout_block([8,9]);
+              break;
+            case 'third-col1':
+              $data = motor_load_layout_block([10,11]);
+              break;
+            case 'third-col2':
+              $data = motor_load_layout_block([12,13,14,15]);
+              break;
+            case 'third-col3':
+              $data = array('url' => 'http://ena.vivaretina.com/ads/b1/index.html');
+              break;
+            case 'third-row':
+              $data = [];
+              $data['third-col1'] = motor_load_layout_block([10,11]);
+              $data['third-col2'] = motor_load_layout_block([12,13,14,15]);
+              $data['third-col3'] = array('url' => 'http://ena.vivaretina.com/ads/b1/index.html');
+              break;
+            default:
+              $data = [];
+              $data['first-row'] = [
+                'main-article' => motor_load_layout_block(1),
+                'main-right' => motor_load_layout_block([2,3,4,5])];
+              $data['second-row'] = [
+                'secondary-col-1' => motor_load_layout_block(6),
+                'secondary-col-2' => motor_load_layout_block(7),
+                'secondary-col-3' => motor_load_layout_block([8,9])];
+              $data['third-row'] = [
+                'third-col1' => motor_load_layout_block([10,11]),
+                'third-col2' => motor_load_layout_block([12,13,14,15]),
+                'third-col3' => array('url' => 'http://ena.vivaretina.com/ads/b1/index.html')];
+          }
+        }
+      }
+    } 
+    catch (Exception $e) {
+      echo 'ERROR', "\n";
+    }
+  
+  /*
+  $data_first['main-article'] = motor_load_layout_block(1);
+  $data_first['main_right'] = motor_load_layout_block([2,3,4,5]);
+
+  $data['first'] = $data_first;
+
+  $data_secondary_col1['secondary_col1'] = motor_load_layout_block(6);
+  $data['secondary_col2'] = motor_load_layout_block(7);
+  $data['secondary_col3'] = motor_load_layout_block([8,9]);
+  */
+
+  
+    print drupal_json_output($data); 
+  }
+  else {
+    print 'no access';
+  } 
+
 }
 
 

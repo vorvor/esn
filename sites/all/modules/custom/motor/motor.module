@@ -632,8 +632,6 @@ function motor_fbimport_form_submit($form, &$form_state) {
   . $access_token;
   $feed = _motor_curl_get_contents($feed_url);
 
-  dpm($feed);
-
   foreach ($feed['data'] as $post) {
 
     $lookup = _motor_fb_post_imported_yet($post['id']);
@@ -754,7 +752,7 @@ function motor_tricky_source($order, $type = 'main') {
   }
   elseif ($type == 'second') {
 
-    $which = ($hour + $order) % 5 + 5;
+    $which = ($hour + $order) % 4 + 5;
     $nqid = 1;
   }
   elseif ($type == 'third') {
@@ -931,6 +929,7 @@ function motor_get_last_article_from_source($source) {
   ->entityCondition('entity_type', 'node')
   ->entityCondition('bundle', 'article')
   ->fieldCondition('field_channel', 'value', $source, '=')
+  ->fieldOrderBy('field_publication_date', 'value', 'DESC')
   ->range(0,1);
 
   $result = $query->execute();
@@ -939,7 +938,7 @@ function motor_get_last_article_from_source($source) {
 
 }
 
-function motor_load_layout_block($order, $size) {
+function motor_load_layout_block($order, $section) {
   global $used;
 
   if (empty($used)) {
@@ -959,7 +958,8 @@ function motor_load_layout_block($order, $size) {
   foreach ($items as $item) {
 
 
-    $main_article = motor_get_last_article_from_source(motor_tricky_source($item, 'main'));
+    $main_article = motor_get_last_article_from_source(motor_tricky_source($item, $section));
+
     $reset = reset($main_article);
     $node = node_load(array_keys($reset)[0]);
     $node_wrapper = entity_metadata_wrapper('node', $node);
@@ -1007,9 +1007,6 @@ function motor_load_layout_block($order, $size) {
       $fields['tags'][] = $tag->name;
     }
 
-    //size - literally width
-    $fields['widht'] = $size;
-
     $block[] = $fields;
 
   }
@@ -1023,100 +1020,40 @@ function motor_load_layout_block($order, $size) {
 
 function motor_ena_response_frontpage_json() {
 
+  for ($c = 0; $c < 5; $c++) {
+    $data[] = motor_load_layout_block($c, 'main');
+  }
+  for ($c = 0; $c < 4; $c++) {
+    $data[] = motor_load_layout_block($c, 'second');
+  }
+  for ($c = 4; $c < 7; $c++) {
+    $data[] = motor_load_layout_block($c, 'third');
+  }
+  for ($c = 0; $c < 3; $c++) {
+    $data[] = motor_load_layout_block($c, 'video');
+  }
+  for ($c = 0; $c < 5; $c++) {
+    $data[] = motor_load_layout_block($c, 'main');
+  }
+  for ($c = 10; $c < 17; $c++) {
+    $data[] = motor_load_layout_block($c, 'rest');
+  }
+
   if ($_SERVER['REDIRECT_HTTP_AUTHORIZATION'] == 'xyz') { 
 
-    try {
+   
   
-      foreach ($_POST as $key => $value) {
-        if ($key == 'block') {
-          switch ($value) {
-            case 'main-article': 
-              $data = motor_load_layout_block(1, '50%');
-              break;
-            case 'main-right':
-              $data = motor_load_layout_block([2,3,4,5], '25%');
-              break;
-            case 'first-row':
-              $data = [];
-              $data['main-article'] = motor_load_layout_block(1, '50%');
-              $data['main-right'] = motor_load_layout_block([2,3,4,5], '25%');
-              break;
-            case 'secondary-col1':
-              $data = motor_load_layout_block(6, '33%');
-              break;
-            case 'secondary-col2':
-              $data = motor_load_layout_block(7, '33%');
-              break;
-            case 'secondary-col3':
-              $data = motor_load_layout_block([8,9], '33%');
-              break;
-            case 'second-row':
-              $data = [];
-              $data['secondary-col-1'] = motor_load_layout_block(6, '33%');
-              $data['secondary-col-2'] = motor_load_layout_block(7, '33%');
-              $data['secondary-col-3'] = motor_load_layout_block([8,9], '33%');
-              break;
-            case 'third-col1':
-              $data = motor_load_layout_block([10,11], '33%');
-              break;
-            case 'third-col2':
-              $data = motor_load_layout_block([12,13,14,15], '33%');
-              break;
-            case 'third-col3':
-              $data = array(
-                'url' => 'http://ena.vivaretina.com/ads/b1/index.html',
-                'width' => '33%');
-              break;
-            case 'third-row':
-              $data = [];
-              $data['third-col1'] = motor_load_layout_block([10,11], '33%');
-              $data['third-col2'] = motor_load_layout_block([12,13,14,15], '33%');
-              $data['third-col3'] = array(
-                'url' => 'http://ena.vivaretina.com/ads/b1/index.html',
-                'width' => '33%'
-                );
-              break;
-            default:
-              $data = [];
-              $data['first-row'] = [
-                'main-article' => motor_load_layout_block(1, '50%'),
-                'main-right' => motor_load_layout_block([2,3,4,5]), '25%'];
-              $data['second-row'] = [
-                'secondary-col-1' => motor_load_layout_block(6, '33%'),
-                'secondary-col-2' => motor_load_layout_block(7, '33%'),
-                'secondary-col-3' => motor_load_layout_block([8,9]), '33%'];
-              $data['third-row'] = [
-                'third-col1' => motor_load_layout_block([10,11], '33%'),
-                'third-col2' => motor_load_layout_block([12,13,14,15], '33%'),
-                'third-col3' => array(
-                  'url' => 'http://ena.vivaretina.com/ads/b1/index.html',
-                  'width' => '33%,'
-                )];
-          }
-        }
-      }
-    } 
-    catch (Exception $e) {
-      echo 'ERROR', "\n";
-    }
-  
-  /*
-  $data_first['main-article'] = motor_load_layout_block(1);
-  $data_first['main_right'] = motor_load_layout_block([2,3,4,5]);
-
-  $data['first'] = $data_first;
-
-  $data_secondary_col1['secondary_col1'] = motor_load_layout_block(6);
-  $data['secondary_col2'] = motor_load_layout_block(7);
-  $data['secondary_col3'] = motor_load_layout_block([8,9]);
-  */
 
   
     print drupal_json_output($data); 
   }
   else {
-    print 'no access';
+
+    return 'no access';
+
   } 
+
+
 
 }
 

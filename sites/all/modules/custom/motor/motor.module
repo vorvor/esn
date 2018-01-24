@@ -1089,18 +1089,22 @@ function motor_ena_response_frontpage_json() {
               break;
             case 'fourth-col1':
             case 'row4-1':
+            case 'video-col1':
               $data = motor_load_layout_block(0, 'video');
               break;
             case 'fourth-col2':
             case 'row4-2':
+            case 'video-col2':
               $data = motor_load_layout_block(1, 'video');
               break;
             case 'fourth-col3':
             case 'row4-3':
+            case 'video-col3':
               $data = motor_load_layout_block(2, 'video');
               break;
             case 'fourth-row':
             case 'row4':
+            case 'videos':
               $data = [];
               $data['fourth-col1'] = motor_load_layout_block(0, 'video');
               $data['fourth-col2'] = motor_load_layout_block(1, 'video');

@@ -1004,6 +1004,12 @@ function motor_load_layout_block($order, $section) {
     //source
     $fields['source'] = $node_wrapper->field_channel->value();
 
+    //date
+    $fields['publication_date'] = array(
+      'timestamp' => $node_wrapper->field_publication_date->value(),
+      'formatted' => date('Y. m. d.', $node_wrapper->field_publication_date->value()),
+      );
+
     //url
     $fields['url'] = $node_wrapper->field_source->value();  
     

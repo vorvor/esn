@@ -957,8 +957,14 @@ function motor_load_layout_block($order, $section) {
 
   foreach ($items as $item) {
 
+    
 
-    $main_article = motor_get_last_article_from_source(motor_tricky_source($item, $section));
+    $source = motor_tricky_source($item, $section);
+    $main_article = motor_get_last_article_from_source($source);
+
+    if (empty($main_article)) {
+      return NULL;
+    }
 
     $reset = reset($main_article);
     $node = node_load(array_keys($reset)[0]);
@@ -1021,22 +1027,40 @@ function motor_load_layout_block($order, $section) {
 function motor_ena_response_frontpage_json() {
 
   for ($c = 0; $c < 5; $c++) {
-    $data[] = motor_load_layout_block($c, 'main');
+    $item = motor_load_layout_block($c, 'main');
+    if (!is_null($item)) {
+      $data[] = $item;
+    }
   }
   for ($c = 0; $c < 4; $c++) {
-    $data[] = motor_load_layout_block($c, 'second');
+    $item = motor_load_layout_block($c, 'second');
+    if (!is_null($item)) {
+      $data[] = $item;
+    }
   }
   for ($c = 4; $c < 7; $c++) {
-    $data[] = motor_load_layout_block($c, 'third');
+    $item = motor_load_layout_block($c, 'third');
+    if (!is_null($item)) {
+      $data[] = $item;
+    }
   }
   for ($c = 0; $c < 3; $c++) {
-    $data[] = motor_load_layout_block($c, 'video');
+    $item = motor_load_layout_block($c, 'video');
+    if (!is_null($item)) {
+      $data[] = $item;
+    }
   }
   for ($c = 0; $c < 5; $c++) {
-    $data[] = motor_load_layout_block($c, 'main');
+   $item = motor_load_layout_block($c, 'main');
+    if (!is_null($item)) {
+      $data[] = $item;
+    }
   }
   for ($c = 10; $c < 17; $c++) {
-    $data[] = motor_load_layout_block($c, 'rest');
+    $item = motor_load_layout_block($c, 'rest');
+    if (!is_null($item)) {
+      $data[] = $item;
+    }
   }
 
   if ($_SERVER['REDIRECT_HTTP_AUTHORIZATION'] == 'xyz') { 

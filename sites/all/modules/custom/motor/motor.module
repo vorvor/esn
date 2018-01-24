@@ -1026,47 +1026,194 @@ function motor_load_layout_block($order, $section) {
 
 function motor_ena_response_frontpage_json() {
 
-  for ($c = 0; $c < 5; $c++) {
-    $item = motor_load_layout_block($c, 'main');
-    if (!is_null($item)) {
-      $data[] = $item;
-    }
-  }
-  for ($c = 0; $c < 4; $c++) {
-    $item = motor_load_layout_block($c, 'second');
-    if (!is_null($item)) {
-      $data[] = $item;
-    }
-  }
-  for ($c = 4; $c < 7; $c++) {
-    $item = motor_load_layout_block($c, 'third');
-    if (!is_null($item)) {
-      $data[] = $item;
-    }
-  }
-  for ($c = 0; $c < 3; $c++) {
-    $item = motor_load_layout_block($c, 'video');
-    if (!is_null($item)) {
-      $data[] = $item;
-    }
-  }
-  for ($c = 0; $c < 5; $c++) {
-   $item = motor_load_layout_block($c, 'main');
-    if (!is_null($item)) {
-      $data[] = $item;
-    }
-  }
-  for ($c = 10; $c < 17; $c++) {
-    $item = motor_load_layout_block($c, 'rest');
-    if (!is_null($item)) {
-      $data[] = $item;
-    }
-  }
+  
 
   if ($_SERVER['REDIRECT_HTTP_AUTHORIZATION'] == 'xyz') { 
 
    
-  
+    foreach ($_POST as $key => $value) {
+        if ($key == 'block') {
+          switch ($value) {
+            case 'main-article': 
+            case 'main-left': 
+            case 'row1-1':
+              $data = motor_load_layout_block(0, 'main');
+              break;
+            case 'main-right':
+            case 'row1-2':
+              $data = motor_load_layout_block([1,2,3,4], 'main');
+              break;
+            case 'first-row':
+            case 'row1':
+              $data = [];
+              $data['main-left'] = motor_load_layout_block(1, 'main');
+              $data['main-right'] = motor_load_layout_block([1,2,3,4], 'main');
+              break;
+            case 'second-col1':
+            case 'row2-1':
+              $data = motor_load_layout_block(0, 'second');
+              break;
+            case 'second-col2':
+            case 'row2-2':
+              $data = motor_load_layout_block(1, 'second');
+              break;
+            case 'second-col3':
+            case 'row2-3':
+              $data = motor_load_layout_block([3,4], 'second');
+              break;
+            case 'second-row':
+            case 'row2':
+              $data = [];
+              $data['secondary-col-1'] = motor_load_layout_block(0, 'second');
+              $data['secondary-col-2'] = motor_load_layout_block(1, 'second');
+              $data['secondary-col-3'] = motor_load_layout_block([3,4], 'second');
+              break;
+            case 'third-col1':
+            case 'row3-1':
+              $data = motor_load_layout_block([4,5], 'third');
+              break;
+            case 'third-col2':
+            case 'row3-2':
+              $data = motor_load_layout_block([6,7,8,9], 'third');
+              break;
+            case 'third-col3':
+            case 'row3-3':
+              $data = array('url' => 'http://ena.vivaretina.com/ads/b1/index.html');
+              break;
+            case 'third-row':
+            case 'row3':
+              $data = [];
+              $data['third-col1'] = motor_load_layout_block([4,5], 'third');
+              $data['third-col2'] = motor_load_layout_block([6,7,8,9], 'third');
+              $data['third-col3'] = array('url' => 'http://ena.vivaretina.com/ads/b1/index.html');
+              break;
+            case 'fourth-col1':
+            case 'row4-1':
+              $data = motor_load_layout_block(0, 'video');
+              break;
+            case 'fourth-col2':
+            case 'row4-2':
+              $data = motor_load_layout_block(1, 'video');
+              break;
+            case 'fourth-col3':
+            case 'row4-3':
+              $data = motor_load_layout_block(2, 'video');
+              break;
+            case 'fourth-row':
+            case 'row4':
+              $data = [];
+              $data['fourth-col1'] = motor_load_layout_block(0, 'video');
+              $data['fourth-col2'] = motor_load_layout_block(1, 'video');
+              $data['fourth-col3'] = motor_load_layout_block(2, 'video');
+              break;
+            case 'fifth-col1':
+            case 'row5-1':
+              $data = motor_load_layout_block(10, 'rest');
+              break;
+            case 'fifth-col2':
+            case 'row5-2':
+              $data = motor_load_layout_block(11, 'rest');
+              break;
+            case 'fifth-col3':
+            case 'row5-3':
+              $data = motor_load_layout_block(12, 'rest');
+              break;
+            case 'fifth-row':
+            case 'row5':
+              $data = [];
+              $data['fifth-col1'] = motor_load_layout_block(10, 'rest');
+              $data['fifth-col2'] = motor_load_layout_block(11, 'rest');
+              $data['fifth-col3'] = motor_load_layout_block(12, 'rest');
+              break;
+            case 'sixth-col1':
+            case 'row6-1':
+              $data = motor_load_layout_block(13, 'rest');
+              break;
+            case 'sixth-col2':
+            case 'row6-2':
+              $data = motor_load_layout_block(14, 'rest');
+              break;
+            case 'sixth-col3':
+            case 'row6-3':
+              $data = motor_load_layout_block(15, 'rest');
+              break;
+            case 'sixth-row':
+            case 'row6':
+              $data = [];
+              $data['sixth-col1'] = motor_load_layout_block(13, 'rest');
+              $data['sixth-col2'] = motor_load_layout_block(14, 'rest');
+              $data['sixth-col3'] = motor_load_layout_block(15, 'rest');
+              break;
+            case 'seventh-col1':
+            case 'row7-1':
+              $data = motor_load_layout_block(16, 'rest');
+              break;
+            case 'seventh-col2':
+            case 'row7-2':
+              $data = motor_load_layout_block(17, 'rest');
+              break;
+            case 'seventh-col3':
+            case 'row7-3':
+              $data = motor_load_layout_block(18, 'rest');
+              break;
+            case 'seventh-row':
+            case 'row7':
+              $data = [];
+              $data['seventh-col1'] = motor_load_layout_block(16, 'rest');
+              $data['seventh-col2'] = motor_load_layout_block(17, 'rest');
+              $data['seventh-col3'] = motor_load_layout_block(18, 'rest');
+              break;
+          }
+        }
+
+        if ($key == 'raw') {
+          for ($c = 0; $c < 5; $c++) {
+            $item = motor_load_layout_block($c, 'main');
+            if (!is_null($item)) {
+              $data[] = $item;
+            }
+          }
+          for ($c = 0; $c < 4; $c++) {
+            $item = motor_load_layout_block($c, 'second');
+            if (!is_null($item)) {
+              $data[] = $item;
+            }
+          }
+          for ($c = 4; $c < 10; $c++) {
+            $item = motor_load_layout_block($c, 'third');
+            if (!is_null($item)) {
+              $data[] = $item;
+            }
+          }
+          for ($c = 0; $c < 3; $c++) {
+            $item = motor_load_layout_block($c, 'video');
+            if (!is_null($item)) {
+              $data[] = $item;
+            }
+          }
+          for ($c = 10; $c < 19; $c++) {
+            $item = motor_load_layout_block($c, 'rest');
+            if (!is_null($item)) {
+              $data[] = $item;
+            }
+          }
+        }
+
+        if ($key == 'tags') {
+
+          $vocabId = 1;
+          $limit = $_POST['tags'];
+          if (empty($limit)) {
+            $limit = 5;
+          }
+
+          $results = db_query_range('SELECT taxonomy_term_data.tid, taxonomy_term_data.name, count(taxonomy_term_data.tid) AS times_used FROM taxonomy_term_data INNER JOIN taxonomy_index ON taxonomy_term_data.tid = taxonomy_index.tid WHERE taxonomy_term_data.vid = :vid GROUP BY taxonomy_term_data.tid, taxonomy_term_data.name ORDER BY times_used DESC', 0, $limit, array(':vid' => $vocabId));
+            foreach ($results as $term) {
+                $data[] = $term->name;
+            }
+
+        }
+      }
 
   
     print drupal_json_output($data); 

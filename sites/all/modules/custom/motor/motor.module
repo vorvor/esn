@@ -1051,9 +1051,8 @@ function motor_ena_response_frontpage_json() {
               break;
             case 'first-row':
             case 'row1':
-              $data = [];
-              $data['main-left'] = motor_load_layout_block(1, 'main');
-              $data['main-right'] = motor_load_layout_block([1,2,3,4], 'main');
+              $data[] = motor_load_layout_block(1, 'main');
+              $data[] = motor_load_layout_block([1,2,3,4], 'main');
               break;
             case 'second-col1':
             case 'row2-1':
@@ -1069,10 +1068,9 @@ function motor_ena_response_frontpage_json() {
               break;
             case 'second-row':
             case 'row2':
-              $data = [];
-              $data['secondary-col-1'] = motor_load_layout_block(0, 'second');
-              $data['secondary-col-2'] = motor_load_layout_block(1, 'second');
-              $data['secondary-col-3'] = motor_load_layout_block([3,4], 'second');
+              $data[] = motor_load_layout_block(0, 'second');
+              $data[] = motor_load_layout_block(1, 'second');
+              $data[] = motor_load_layout_block([3,4], 'second');
               break;
             case 'third-col1':
             case 'row3-1':
@@ -1088,10 +1086,9 @@ function motor_ena_response_frontpage_json() {
               break;
             case 'third-row':
             case 'row3':
-              $data = [];
-              $data['third-col1'] = motor_load_layout_block([4,5], 'third');
-              $data['third-col2'] = motor_load_layout_block([6,7,8,9], 'third');
-              $data['third-col3'] = array('url' => 'http://ena.vivaretina.com/ads/b1/index.html');
+              $data[] = motor_load_layout_block([4,5], 'third');
+              $data[] = motor_load_layout_block([6,7,8,9], 'third');
+              $data[] = array('url' => 'http://ena.vivaretina.com/ads/b1/index.html');
               break;
             case 'fourth-col1':
             case 'row4-1':
@@ -1111,10 +1108,9 @@ function motor_ena_response_frontpage_json() {
             case 'fourth-row':
             case 'row4':
             case 'videos':
-              $data = [];
-              $data['fourth-col1'] = motor_load_layout_block(0, 'video');
-              $data['fourth-col2'] = motor_load_layout_block(1, 'video');
-              $data['fourth-col3'] = motor_load_layout_block(2, 'video');
+              $data[] = motor_load_layout_block(0, 'video');
+              $data[] = motor_load_layout_block(1, 'video');
+              $data[] = motor_load_layout_block(2, 'video');
               break;
             case 'fifth-col1':
             case 'row5-1':
@@ -1130,10 +1126,9 @@ function motor_ena_response_frontpage_json() {
               break;
             case 'fifth-row':
             case 'row5':
-              $data = [];
-              $data['fifth-col1'] = motor_load_layout_block(10, 'rest');
-              $data['fifth-col2'] = motor_load_layout_block(11, 'rest');
-              $data['fifth-col3'] = motor_load_layout_block(12, 'rest');
+              $data[] = motor_load_layout_block(10, 'rest');
+              $data[] = motor_load_layout_block(11, 'rest');
+              $data[] = motor_load_layout_block(12, 'rest');
               break;
             case 'sixth-col1':
             case 'row6-1':
@@ -1149,10 +1144,9 @@ function motor_ena_response_frontpage_json() {
               break;
             case 'sixth-row':
             case 'row6':
-              $data = [];
-              $data['sixth-col1'] = motor_load_layout_block(13, 'rest');
-              $data['sixth-col2'] = motor_load_layout_block(14, 'rest');
-              $data['sixth-col3'] = motor_load_layout_block(15, 'rest');
+              $data[] = motor_load_layout_block(13, 'rest');
+              $data[] = motor_load_layout_block(14, 'rest');
+              $data[] = motor_load_layout_block(15, 'rest');
               break;
             case 'seventh-col1':
             case 'row7-1':
@@ -1168,10 +1162,9 @@ function motor_ena_response_frontpage_json() {
               break;
             case 'seventh-row':
             case 'row7':
-              $data = [];
-              $data['seventh-col1'] = motor_load_layout_block(16, 'rest');
-              $data['seventh-col2'] = motor_load_layout_block(17, 'rest');
-              $data['seventh-col3'] = motor_load_layout_block(18, 'rest');
+              $data[] = motor_load_layout_block(16, 'rest');
+              $data[] = motor_load_layout_block(17, 'rest');
+              $data[] = motor_load_layout_block(18, 'rest');
               break;
           }
         }

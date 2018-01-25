@@ -1051,8 +1051,11 @@ function motor_ena_response_frontpage_json() {
               break;
             case 'first-row':
             case 'row1':
+              $data[] = motor_load_layout_block(0, 'main');
               $data[] = motor_load_layout_block(1, 'main');
-              $data[] = motor_load_layout_block([1,2,3,4], 'main');
+              $data[] = motor_load_layout_block(2, 'main');
+              $data[] = motor_load_layout_block(3, 'main');
+              $data[] = motor_load_layout_block(4, 'main');
               break;
             case 'second-col1':
             case 'row2-1':
@@ -1064,13 +1067,14 @@ function motor_ena_response_frontpage_json() {
               break;
             case 'second-col3':
             case 'row2-3':
-              $data = motor_load_layout_block([3,4], 'second');
+              $data = motor_load_layout_block([2,3], 'second');
               break;
             case 'second-row':
             case 'row2':
-              $data[] = motor_load_layout_block(0, 'second');
               $data[] = motor_load_layout_block(1, 'second');
-              $data[] = motor_load_layout_block([3,4], 'second');
+              $data[] = motor_load_layout_block(2, 'second');
+              $data[] = motor_load_layout_block(3, 'second');
+              $data[] = motor_load_layout_block(4, 'second');
               break;
             case 'third-col1':
             case 'row3-1':
@@ -1086,8 +1090,13 @@ function motor_ena_response_frontpage_json() {
               break;
             case 'third-row':
             case 'row3':
-              $data[] = motor_load_layout_block([4,5], 'third');
-              $data[] = motor_load_layout_block([6,7,8,9], 'third');
+              $data[] = motor_load_layout_block(4, 'third');
+              $data[] = motor_load_layout_block(5, 'third');
+              $data[] = motor_load_layout_block(6, 'third');
+              $data[] = motor_load_layout_block(7, 'third');
+              $data[] = motor_load_layout_block(8, 'third');
+              $data[] = motor_load_layout_block(9, 'third');
+
               $data[] = array('url' => 'http://ena.vivaretina.com/ads/b1/index.html');
               break;
             case 'fourth-col1':

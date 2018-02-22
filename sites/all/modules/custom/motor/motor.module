@@ -1420,7 +1420,7 @@ function motor_ena_response_frontpage_json() {
       }       
     
     $data = motor_load_layout_block(4, 'main');
-    print json_encode($data); 
+    drupal_json_output($data); 
   }
   else {
 

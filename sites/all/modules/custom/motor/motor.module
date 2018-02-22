@@ -965,7 +965,7 @@ function motor_node_to_response_fields($node) {
 
   // image
   $image = $node_wrapper->field_image->value();
-  dpm($image);
+
   $fields['image'] = array();
 
   if (!empty($image)) {
@@ -1419,7 +1419,6 @@ function motor_ena_response_frontpage_json() {
         }
       }       
     
-    $data = motor_load_layout_block(4, 'main');
     drupal_json_output($data); 
   }
   else {

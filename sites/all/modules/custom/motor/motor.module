@@ -946,6 +946,12 @@ function motor_get_last_article_from_source($source) {
 }
 
 function motor_node_to_response_fields($node) {
+  global $used;
+
+  if (empty($used)) {
+    $used = array();
+  }
+
   $node_wrapper = entity_metadata_wrapper('node', $node);
 
 
@@ -959,6 +965,7 @@ function motor_node_to_response_fields($node) {
 
   // image
   $image = $node_wrapper->field_image->value();
+  dpm($image);
   $fields['image'] = array();
 
   if (!empty($image)) {
@@ -971,7 +978,7 @@ function motor_node_to_response_fields($node) {
   else {
     if (file_exists('sites/default/files/dummy_images')) {
 
-      $images = file_scan_directory('public://dummy_images', '/.*\/'); //remove \
+      $images = file_scan_directory('public://dummy_images', '/.*/'); //remove \
       $urls = array_keys($images);
       $output = $urls[rand(0, count($images) - 1)];
       while (in_array($output, $used)) {
@@ -1007,11 +1014,6 @@ function motor_node_to_response_fields($node) {
 
 /* If $nid TRUE $order is nid. */
 function motor_load_layout_block($order, $section, $nid = FALSE) {
-  global $used;
-
-  if (empty($used)) {
-    $used = array();
-  }
 
   if (!is_array($order)) {
     $items[] = $order;
@@ -1416,8 +1418,9 @@ function motor_ena_response_frontpage_json() {
           $data[] = motor_load_layout_block($nid, '', TRUE);
         }
       }       
-  
-    print drupal_json_output($data); 
+    
+    $data = motor_load_layout_block(4, 'main');
+    print json_encode($data); 
   }
   else {
 
@@ -1425,7 +1428,7 @@ function motor_ena_response_frontpage_json() {
 
   } 
 
-
+  
 
 }
 

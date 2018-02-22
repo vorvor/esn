@@ -405,7 +405,7 @@ abstract class FeedsProcessor extends FeedsPlugin {
       // Something bad happened, log it.
       catch (Exception $e) {
         $state->failed++;
-        drupal_set_message($e->getMessage(), 'warning');
+        drupal_set_message($e->getMessage() . $source->config['FeedsHTTPFetcher']['source'], 'warning');
         list($message, $arguments) = $this->createLogEntry($e, $entity, $item);
         $source->log('import', $message, $arguments, WATCHDOG_ERROR);
       }
@@ -420,6 +420,9 @@ abstract class FeedsProcessor extends FeedsPlugin {
     // to items that were no longer in the source.
     $this->clean($state);
     $info = $this->entityInfo();
+
+    //watchdog('vorvor', '<pre>' . print_r($source,1) . '</pre>');
+    watchdog('source', $source->config['FeedsHTTPFetcher']['source']);
     $tokens = array(
       '@entity' => strtolower($info['label']),
       '@entities' => strtolower($info['label plural']),
@@ -429,8 +432,8 @@ abstract class FeedsProcessor extends FeedsPlugin {
       $messages[] = array(
        'message' => format_plural(
           $state->created,
-          'Created @number @entity.',
-          'Created @number @entities.',
+          'Created @number @entity.' . $source->config['FeedsHTTPFetcher']['source'],
+          'Created @number @entities.' . $source->config['FeedsHTTPFetcher']['source'],
           array('@number' => $state->created) + $tokens
         ),
       );
@@ -439,8 +442,8 @@ abstract class FeedsProcessor extends FeedsPlugin {
       $messages[] = array(
        'message' => format_plural(
           $state->updated,
-          'Updated @number @entity.',
-          'Updated @number @entities.',
+          'Updated @number @entity.' . $source->config['FeedsHTTPFetcher']['source'],
+          'Updated @number @entities.' . $source->config['FeedsHTTPFetcher']['source'],
           array('@number' => $state->updated) + $tokens
         ),
       );
@@ -449,8 +452,8 @@ abstract class FeedsProcessor extends FeedsPlugin {
       $messages[] = array(
         'message' => format_plural(
             $state->unpublished,
-            'Unpublished @number @entity.',
-            'Unpublished @number @entities.',
+            'Unpublished @number @entity.' . $source->config['FeedsHTTPFetcher']['source'],
+            'Unpublished @number @entities.' . $source->config['FeedsHTTPFetcher']['source'],
             array('@number' => $state->unpublished) + $tokens
         ),
       );
@@ -488,7 +491,7 @@ abstract class FeedsProcessor extends FeedsPlugin {
     }
     if (empty($messages)) {
       $messages[] = array(
-        'message' => t('There are no new @entities.', array('@entities' => strtolower($info['label plural']))),
+        'message' => t('There are no new @entities.' . $source->config['FeedsHTTPFetcher']['source'], array('@entities' => strtolower($info['label plural']))),
       );
     }
     foreach ($messages as $message) {

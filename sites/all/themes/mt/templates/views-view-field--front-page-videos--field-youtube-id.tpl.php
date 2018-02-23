@@ -23,4 +23,4 @@
  */
 ?>
 
-<iframe width="560" height="315" src="https://www.youtube.com/embed/<?php print $output; ?>" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+<iframe width="400" height="220" src="https://www.youtube.com/embed/<?php print $output; ?>" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>

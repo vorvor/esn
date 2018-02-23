@@ -766,7 +766,7 @@ form#privatemsg-new .form-actions #edit-cancel {
 }
 
 
-/* Nesw front */
+/* News front */
 
 .views-field-title {
   font-weight: bold;
@@ -782,6 +782,15 @@ form#privatemsg-new .form-actions #edit-cancel {
 .view-display-id-panel_pane_1 .views-field-title,
 .view-display-id-panel_pane_2 .views-field-title {
   font-size: 38px;
+}
+
+.pane-front-page-videos-panel-pane-1 .views-field-title,
+.pane-front-page-videos-panel-pane-2 .views-field-title,
+.pane-front-page-videos-panel-pane-3 .views-field-title {
+  font-weight: bold;
+  line-height:1.2em;
+  margin-bottom: 0.5em;
+  font-size: 1em;
 }
 
 .pane-page-title {
@@ -824,7 +833,8 @@ form#privatemsg-new .form-actions #edit-cancel {
   width: 350px;
 }
 
-.view-frontpage-blocks .views-field-field-source-1 {
+.view-frontpage-blocks .views-field-field-source-1,
+.view-front-page-videos .views-field-field-channel {
   background: #0072b9;
   color: #fff;
   padding: 2px 6px;
@@ -965,7 +975,10 @@ form#privatemsg-new .form-actions #edit-cancel {
 .pane-frontpage-blocks-panel-pane-33,
 .pane-frontpage-blocks-panel-pane-34,
 .pane-frontpage-blocks-panel-pane-35,
-.pane-frontpage-blocks-panel-pane-36 {
+.pane-frontpage-blocks-panel-pane-36,
+.pane-front-page-videos-panel-pane-1,
+.pane-front-page-videos-panel-pane-2,
+.pane-front-page-videos-panel-pane-3 {
   width: 32%;
   float: left;
 }

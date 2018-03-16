@@ -1421,6 +1421,23 @@ function motor_ena_response_frontpage_json() {
           }
           $data[] = motor_load_layout_block($nid, '', TRUE);
         }
+
+        if ($key == 'pager') {
+          // offset: 23;
+          $query = new EntityFieldQuery();
+          $query->entityCondition('entity_type', 'node')
+            ->entityCondition('bundle', 'article')
+            ->propertyCondition('status', NODE_PUBLISHED)
+            ->range(23 + (int)$_POST['offset'] * (int)$_POST['limit'], $_POST['limit']);
+
+          $result = $query->execute();
+          if (isset($result['node'])) {
+            $nids = array_keys($result['node']);
+            foreach ($nids as $nid) {
+              $data[] = motor_load_layout_block($nid, '', TRUE);
+            }
+          } 
+        }
       }       
     
     drupal_json_output($data); 

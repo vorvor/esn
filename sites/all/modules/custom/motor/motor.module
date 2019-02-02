@@ -972,7 +972,7 @@ function motor_node_to_response_fields($node) {
 
   $fields['image'] = array();
 
-  if (!empty($image)) {
+  if (!empty($image) && strpos($image, 'aspx') === 0) {
     $thumb = image_style_url('medium', $image['uri']);
     $fields['image']['filename'] = $image['filename'];
     $fields['image']['uri'] = $thumb;

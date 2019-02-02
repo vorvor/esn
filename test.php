@@ -45,4 +45,12 @@ $array = array('Renault' => array('Periods' => array('0-5' => array('options' =>
 
 print_r(getNavItemIndex($array, 'hopp'));
 
+
+
+$xml = simplexml_load_file('wp1.xml');
+$json = json_encode($xml);
+$array = json_decode($json,TRUE);
+print('<pre>');
+print_r($array);
+print('</pre>');
 ?>

@@ -964,7 +964,7 @@ function motor_node_to_response_fields($node) {
   $fields['uri'] = urlencode(drupal_get_path_alias('node/' . $node->nid));
   $fields['title'] = $node_wrapper->title->value();
 
-  $fields['lead'] = $node_wrapper->field_lead->value->value();
+  $fields['lead'] = strip_tags($node_wrapper->field_lead->value->value());
   
 
   // image

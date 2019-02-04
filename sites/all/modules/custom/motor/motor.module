@@ -96,6 +96,13 @@ function motor_menu() {
     'type' => MENU_CALLBACK,
    );
 
+  $items['field-response-test'] = array(
+    'title' => 'Field response test',
+    'page callback' => 'motor_node_to_response_fields_test',
+    'access arguments' => array('access content'),
+    'type' => MENU_CALLBACK,
+   );
+
   return $items;
 }
 
@@ -949,6 +956,12 @@ function motor_get_last_article_from_source($source) {
 
 }
 
+function motor_node_to_response_fields_test() {
+  $node = node_load(10964);
+  motor_node_to_response_fields($node);
+  return 'A';
+}
+
 function motor_node_to_response_fields($node) {
   global $used;
 
@@ -968,16 +981,19 @@ function motor_node_to_response_fields($node) {
   
 
   // image
-  $image = $node_wrapper->field_image->value();
-
+  $image = $node_wrapper->field_image_url->value();
+  $image = $image[0];
   $fields['image'] = array();
 
-  if (!empty($image) && strpos($image, 'aspx') === 0) {
+  if (!empty($image)) {
+    /*
     $thumb = image_style_url('medium', $image['uri']);
     $fields['image']['filename'] = $image['filename'];
     $fields['image']['uri'] = $thumb;
     $fields['image']['filesize'] = $image['filesize'];
     $fields['image']['filemime'] = $image['filemime'];
+    */
+     $fields['image']['uri'] = $image;
   }
   else {
     if (file_exists('sites/default/files/dummy_images')) {
@@ -991,7 +1007,10 @@ function motor_node_to_response_fields($node) {
       $used[] = $output;
      
       $url = $output;
-      $fields['image']['uri'] = image_style_url('medium', $url); 
+      $parts = explode('/', $url);
+      $url = $parts[count($parts) - 1];
+      //$fields['image']['uri'] = image_style_url('medium', $url); 
+      $fields['image']['uri'] = 'https://www.ecdh.hu/img/ena/' . $url; 
     }
   }
 
@@ -1013,6 +1032,7 @@ function motor_node_to_response_fields($node) {
     $fields['tags'][] = $tag->name;
   }
 
+  dpm($fields);
   return $fields;
 }
 
